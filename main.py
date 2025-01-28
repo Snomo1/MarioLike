@@ -23,11 +23,19 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
+        if event.type == pygame.KEYDOWN:
+            print("Down")
+            if event.key == pygame.K_SPACE:
+                print("Jump")
+        if event.type == pygame.KEYUP:
+            print("Up")
         # if event.type == pygame.MOUSEMOTION:
         #     print(event.pos)
         #     if player_rect.collidepoint(event.pos):
         #         print("Boom")
-
+    # keys = pygame.key.get_pressed()
+    # if keys == pygame.K_SPACE:
+    #     print("jump")
     screen.blit(sky_surface,(0,0))
     screen.blit(ground_surface, (0, 300))
     pygame.draw.rect(screen,"#c0e8ec",score_rect,15)
