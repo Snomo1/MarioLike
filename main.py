@@ -14,7 +14,7 @@ def display_score():
 def obstacle_movement(obstacle_list):
     if obstacle_list:
         for obstacle_rect in obstacle_list:
-            obstacle_rect.x -= 7
+            obstacle_rect.x -= 8
             if obstacle_rect.bottom == 300:
                 screen.blit(snail_surface, obstacle_rect)
             else:
