@@ -2,6 +2,12 @@ import pygame
 from sys import exit
 from random import randint
 
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load("graphics/player/player_walk_1.png").convert_alpha()
+        self.rect = self.image.get_rect(midbottom = (200,300))
+
 
 def display_score():
     current_time = (pygame.time.get_ticks() - start_time) // 100
@@ -51,6 +57,9 @@ test_font = pygame.font.Font("graphics/font/Pixeltype.ttf", 80)
 game_active = False
 start_time = 0
 score = 0
+
+
+player = Player()
 
 sky_surface = pygame.image.load("graphics/sky.png").convert_alpha()
 ground_surface = pygame.image.load("graphics/ground.png").convert_alpha()
@@ -108,7 +117,9 @@ snail_animation_timer = pygame.USEREVENT + 2
 pygame.time.set_timer(snail_animation_timer,500)
 
 fly_animation_timer = pygame.USEREVENT + 3
-pygame.time.set_timer(fly_animation_timer,200)
+pygame.time.set_timer(fly_animation_timer,10)
+
+sky_x_pos = 0
 
 while True:
     for event in pygame.event.get():
@@ -135,19 +146,25 @@ while True:
             if event.type == fly_animation_timer:
                 if fly_frame_index == 0: fly_frame_index = 1
                 else: fly_frame_index = 0
-                fly_surface = fly_frame[snail_frame_index]
+                fly_surface = fly_frame[fly_frame_index]
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if player_rect.collidepoint(event.pos):
                     if player_rect.bottom >= 300:
-                        player_gravity = -20
+                        player_gravity = -21
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_TAB:
             game_active = True
             # snail_rect.left = 850
             start_time = pygame.time.get_ticks()
 
     if game_active:
-        screen.blit(sky_surface, (0, 0))
+        # screen.blit(sky_surface, (0, 0))
+        sky_x_pos -= 2  # Move the background left
+        if sky_x_pos <= -800:  # Reset when it fully moves out
+            sky_x_pos = 0
+
+        screen.blit(sky_surface, (sky_x_pos, 0))
+        screen.blit(sky_surface, (sky_x_pos + 800, 0))  # Second copy for seamless looping
         screen.blit(ground_surface, (0, 300))
         # pygame.draw.rect(screen, "Red", score_rect, 6)
         # pygame.draw.rect(screen, "#c0e8ec", score_rect, -1)
