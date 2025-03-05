@@ -5,8 +5,41 @@ from random import randint
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("graphics/player/player_walk_1.png").convert_alpha()
+
+        player_walk_1 = pygame.image.load("graphics/player/player_walk_1.png").convert_alpha()
+        player_walk_2 = pygame.image.load("graphics/player/player_walk_2.png").convert_alpha()
+        self.player_walk = [player_walk_1, player_walk_2]
+        self.player_index = 0
+        self.player_jump = pygame.image.load("graphics/player/jump.png").convert_alpha()
+
+        self.image = self.player_walk[self.player_index]
         self.rect = self.image.get_rect(midbottom = (200,300))
+        self.gravity = 0
+
+    def player_input(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_SPACE] and self.rect.bottom >= 300:
+            self.gravity = -21
+
+    def apply_gravity(self):
+        self.gravity += 1
+        self.rect.y += self.gravity
+        if self.rect.bottom >= 300:
+            self.rect.bottom = 300
+
+    def update(self):
+        self.player_input()
+        self.apply_gravity()
+        self.animation_state()
+
+    def animation_state(self):
+        if self.rect.bottom < 300:
+            self.image = self.player_jump
+        else:
+            self.player_index += 0.1
+            if self.player_index >= len(self.player_walk):
+                self.player_index = 0
+            self.image = self.player_walk[int(self.player_index)]
 
 
 def display_score():
@@ -59,10 +92,13 @@ start_time = 0
 score = 0
 
 
-player = Player()
+player = pygame.sprite.GroupSingle()
+player.add(Player())
 
 sky_surface = pygame.image.load("graphics/sky.png").convert_alpha()
+sky_x_pos = 0
 ground_surface = pygame.image.load("graphics/ground.png").convert_alpha()
+ground_x_pos = 0
 
 game_name_surface = test_font.render("JUMPTOPIA", False, "#0959c5")
 game_name_rect = game_name_surface.get_rect(center=(400, 40))
@@ -119,7 +155,7 @@ pygame.time.set_timer(snail_animation_timer,500)
 fly_animation_timer = pygame.USEREVENT + 3
 pygame.time.set_timer(fly_animation_timer,10)
 
-sky_x_pos = 0
+
 
 while True:
     for event in pygame.event.get():
@@ -159,13 +195,20 @@ while True:
 
     if game_active:
         # screen.blit(sky_surface, (0, 0))
-        sky_x_pos -= 2  # Move the background left
+        # THIS IS WHERE I MADE CHANGES TO THE BACKGROUND AND FLOOR ANIMATION
+        sky_x_pos -= 1  # Move the background left
         if sky_x_pos <= -800:  # Reset when it fully moves out
             sky_x_pos = 0
 
         screen.blit(sky_surface, (sky_x_pos, 0))
         screen.blit(sky_surface, (sky_x_pos + 800, 0))  # Second copy for seamless looping
-        screen.blit(ground_surface, (0, 300))
+
+        #screen.blit(ground_surface, (0, 300))
+        ground_x_pos -= 3
+        if ground_x_pos <= - 800:
+            ground_x_pos = 0
+        screen.blit(ground_surface,(ground_x_pos,300))
+        screen.blit(ground_surface,(ground_x_pos + 800, 300))
         # pygame.draw.rect(screen, "Red", score_rect, 6)
         # pygame.draw.rect(screen, "#c0e8ec", score_rect, -1)
 
@@ -183,6 +226,8 @@ while True:
             player_rect.bottom = 300
         player_animations()
         screen.blit(player_surface, player_rect)
+        player.draw(screen)
+        player.update()
 
         # OBSTACLE movement
         obstacle_rect_list = obstacle_movement(obstacle_rect_list)
