@@ -143,8 +143,8 @@ test_font = pygame.font.Font("graphics/font/Pixeltype.ttf", 80)
 game_active = False
 start_time = 0
 score = 0
-bg_music = pygame.mixer.Sound("graphics/Audio/uouoo.wav")
-bg_music.set_volume(0.2)
+bg_music = pygame.mixer.Sound("graphics/Audio/for momo naruto.mp3")
+bg_music.set_volume(0.5)
 bg_music.play(loops = -1)
 
 # SPRITE GROUPS
@@ -222,7 +222,7 @@ while True:
                         player_gravity = -21
 
             if event.type == obstacle_timer:
-                obstacles_group.add(Obstacles(choice(["fly", "snail", "snail", "snail"])))
+                obstacles_group.add(Obstacles(choice(["fly", "fly", "snail", "snail","snail"])))
                 # if randint(0, 2):
                 #     obstacle_rect_list.append(snail_surface.get_rect(bottomright=(randint(900, 1500), 300)))
                 # else:
